@@ -29,13 +29,16 @@ class HomeScreen extends StatelessWidget {
             final note = _noteController.notes[index];
             return Dismissible(
               key: Key(note.key.toString()),
+              direction: DismissDirection.endToStart,
               onDismissed: (direction) {
                 _noteController.deleteNote(note.key);
-                Get.snackbar(
-                  'Note Deleted',
-                  'The note "${note.title}" has been deleted.',
-                  snackPosition: SnackPosition.BOTTOM,
+                
+                final snackBar = SnackBar(
+                  content: Text('The note "${note.title}" has been deleted.'),
+                  duration: Durations.short4,
+                  behavior: SnackBarBehavior.floating,
                 );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
               background: Container(
                 color: Colors.red,
