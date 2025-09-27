@@ -1,16 +1,29 @@
-# writer
+# SwiftWrite
 
-A new Flutter project.
+A high-performance, cross-platform writer app built with Flutter, focused on speed, efficiency, and Markdown support.
 
-## Getting Started
+## Goal
 
-This project is a starting point for a Flutter application.
+To build a minimalist writer app that prioritizes a fast, distraction-free experience. It's designed for writers, developers, and students who need a reliable tool for capturing notes, drafting content, and organizing ideas with Markdown and (eventually) code snippets.
 
-A few resources to get you started if this is your first Flutter project:
+## Features (In Progress)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Fast, distraction-free editor:** A simple, clean interface that lets you focus on writing.
+- **Local First Storage:** All notes are stored locally on your device using Hive, ensuring your data is always available, even offline.
+- **Theme Support:** Switch between light and dark modes to suit your preference.
+- **Note Management:** Create, edit, and delete notes with ease. Notes are saved automatically.
+- **Swipe to Delete:** Quickly delete notes from the list with a simple swipe gesture.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Planned Features
+
+- Markdown live preview
+- Tagging and filtering
+- Full-text search
+- Export to `.md` and `.txt`
+- Code snippet support with syntax highlighting
+
+## Tech Stack
+
+- **Framework:** [Flutter](https://flutter.dev/)
+- **State Management:** [GetX](https://pub.dev/packages/get)
+- **Local Database:** [Hive](https://pub.dev/packages/hive)
