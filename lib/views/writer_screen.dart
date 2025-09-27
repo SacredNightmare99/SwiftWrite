@@ -62,18 +62,18 @@ class WriterScreenState extends State<WriterScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvokedWithResult: (didPop, result) async {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) _saveNote();
       },
       child: Scaffold(
         appBar: AppBar(
           title: TextField(
             controller: _titleController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Title',
               border: InputBorder.none,
             ),
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
         body: Padding(
@@ -82,10 +82,11 @@ class WriterScreenState extends State<WriterScreen> {
             controller: _contentController,
             maxLines: null,
             expands: true,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Start writing...',
               border: InputBorder.none,
             ),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
       ),

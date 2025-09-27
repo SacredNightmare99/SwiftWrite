@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:writer/controllers/note_controller.dart';
+import 'package:writer/data/services/theme_service.dart';
+import 'package:writer/utils/widgets/note_tile.dart';
 
 class HomeScreen extends StatelessWidget {
   final NoteController _noteController = Get.put(NoteController());
@@ -11,14 +13,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('SwiftWrite'),
+        title: const Text('Writer'),
         actions: [
           IconButton(
-            icon: Icon(Icons.brightness_6),
-            onPressed: () {
-              Get.changeThemeMode(
-                  Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
-            },
+            icon: const Icon(Icons.brightness_6),
+            onPressed: () => ThemeService().switchTheme(),
           ),
         ],
       ),
@@ -35,24 +34,23 @@ class HomeScreen extends StatelessWidget {
                 
                 final snackBar = SnackBar(
                   content: Text('The note "${note.title}" has been deleted.'),
-                  duration: Durations.short4,
+                  duration: Durations.medium2,
                   behavior: SnackBarBehavior.floating,
                 );
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
               background: Container(
-                color: Colors.red,
                 alignment: Alignment.centerRight,
-                padding: EdgeInsets.only(right: 20.0),
-                child: Icon(Icons.delete, color: Colors.white),
-              ),
-              child: ListTile(
-                title: Text(note.title),
-                subtitle: Text(
-                  note.content,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                padding: const EdgeInsets.only(right: 20.0),
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.error,
+                  borderRadius: BorderRadius.circular(10)
                 ),
+                child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
+              ),
+              child: NoteTile(
+                note: note,
                 onTap: () => Get.toNamed('/writer', arguments: note),
               ),
             );
@@ -61,7 +59,7 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed('/writer'),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
