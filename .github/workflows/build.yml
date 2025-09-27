@@ -1,46 +1,41 @@
-# .github/workflows/build.yml
-
 name: Build Flutter APK
 
-# This action will trigger on every push to the main branch
 on:
   push:
     branches: ["main"]
 
 jobs:
   build:
-    # Use the latest version of Ubuntu
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Set up Java, which is required for Android builds
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
 
-      # 3. Set up the Flutter environment
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "beta"
 
-      # 4. Get Flutter dependencies
       - name: Get dependencies
         run: flutter pub get
 
-      # 5. Build the APK in release mode
       - name: Build release APK
         run: flutter build apk --release
 
-      # 6. Upload the generated APK as a workflow artifact
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: release-apk # Name of the artifact
-          path: build/app/outputs/flutter-apk/app-release.apk # Path to the APK file
+          tag_name: latest
+          name: Latest Release
+          draft: false
+          prerelease: false
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
