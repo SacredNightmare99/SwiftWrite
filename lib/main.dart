@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:writer/data/models/note.dart';
 import 'package:writer/routes/app_routes.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(NoteAdapter());
+  await Hive.openBox<Note>('notes');
+
   runApp(MyApp());
 }
 
