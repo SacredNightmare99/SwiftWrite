@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:writer/controllers/note_controller.dart';
+import 'package:writer/data/services/theme_service.dart';
 import 'package:writer/utils/widgets/note_tile.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -16,10 +17,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.brightness_6),
-            onPressed: () {
-              Get.changeThemeMode(
-                  Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
-            },
+            onPressed: () => ThemeService().switchTheme(),
           ),
         ],
       ),
