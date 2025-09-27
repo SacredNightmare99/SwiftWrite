@@ -49,7 +49,7 @@ class WriterScreenState extends State<WriterScreen> {
       _noteController.updateNote(_existingNote!.key, _existingNote!);
     } else {
       final newNote = Note(
-        title: title,
+        title: title.isEmpty? "New Note" : title,
         content: content,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
