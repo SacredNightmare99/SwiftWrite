@@ -10,6 +10,7 @@ class AppTheme {
     scaffoldBackgroundColor: AppColors.backgroundColorLight,
     textTheme: const TextTheme(
       headlineLarge: TextStyle(color: AppColors.textColorLight, fontSize: 24, fontWeight: FontWeight.bold),
+      headlineMedium: TextStyle(color: AppColors.textColorLight, fontSize: 22, fontWeight: FontWeight.bold),
       headlineSmall: TextStyle(color: AppColors.textColorLight, fontSize: 20, fontWeight: FontWeight.bold),
       titleMedium: TextStyle(color: AppColors.textColorLight, fontSize: 18, fontWeight: FontWeight.bold),
       bodyLarge: TextStyle(color: AppColors.textColorLight, fontSize: 16),
@@ -41,6 +42,13 @@ class AppTheme {
       backgroundColor: AppColors.primaryColorLight,
       foregroundColor: AppColors.backgroundColorLight,
     ),
+    dividerColor: AppColors.dividerColorLight,
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: AppColors.cardColorDark,
+      contentTextStyle: const TextStyle(color: AppColors.textColorDark),
+      actionTextColor: AppColors.primaryColorLight,
+      behavior: SnackBarBehavior.floating,
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData(
@@ -49,6 +57,7 @@ class AppTheme {
     scaffoldBackgroundColor: AppColors.backgroundColorDark,
     textTheme: const TextTheme(
       headlineLarge: TextStyle(color: AppColors.textColorDark, fontSize: 24, fontWeight: FontWeight.bold),
+      headlineMedium: TextStyle(color: AppColors.textColorDark, fontSize: 22, fontWeight: FontWeight.bold),
       headlineSmall: TextStyle(color: AppColors.textColorDark, fontSize: 20, fontWeight: FontWeight.bold),
       titleMedium: TextStyle(color: AppColors.textColorDark, fontSize: 18, fontWeight: FontWeight.bold),
       bodyLarge: TextStyle(color: AppColors.textColorDark, fontSize: 16),
@@ -79,6 +88,13 @@ class AppTheme {
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: AppColors.primaryColorDark,
       foregroundColor: AppColors.backgroundColorDark,
+    ),
+    dividerColor: AppColors.dividerColorDark,
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: AppColors.cardColorLight, // or colorScheme.surface
+      contentTextStyle: const TextStyle(color: AppColors.textColorLight),
+      actionTextColor: AppColors.primaryColorLight,
+      behavior: SnackBarBehavior.floating,
     ),
   );
 }

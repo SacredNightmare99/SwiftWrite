@@ -73,6 +73,7 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
 ## 7. MVP Development Plan
 
 ### Phase 1: Project Setup & Foundation
+
 - **Dependencies:** Install and configure core packages:
   - `get`: For state management and navigation.
   - `hive` & `hive_flutter`: For local database.
@@ -86,6 +87,7 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
   - Implement theme switching for light and dark modes.
 
 ### Phase 2: Core Editor & Storage
+
 - **Database:**
   - Initialize Hive and register the `Note` adapter.
   - Create a `DatabaseService` to handle all CRUD (Create, Read, Update, Delete) operations.
@@ -99,6 +101,7 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
   - Implement swipe-to-delete functionality.
 
 ### Phase 3: Markdown & Export
+
 - **Markdown Preview:**
   - Integrate the `flutter_markdown` package.
   - Add a toggle button on the editor screen to switch between the raw text editor and a read-only markdown preview.
@@ -108,6 +111,7 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
   - Use the `share_plus` package to bring up the native share sheet.
 
 ### Phase 4: Search & Organization
+
 - **Tagging:**
   - Add a `List<String> tags` field to the `Note` model.
   - Create UI in the editor to add/remove tags for a note.
@@ -117,6 +121,7 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
   - Implement a search controller and logic to filter notes by title and content in real-time.
 
 ### Phase 5: Refinement & Performance Tuning
+
 - **Performance:**
   - Profile the editor's input latency.
   - Benchmark markdown rendering and search speeds against the success metrics.
