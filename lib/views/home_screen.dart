@@ -34,8 +34,9 @@ class HomeScreen extends StatelessWidget {
                 
                 final snackBar = SnackBar(
                   content: Text('The note "${note.title}" has been deleted.'),
-                  duration: Durations.medium2,
+                  duration: Duration(seconds: 5),
                   behavior: SnackBarBehavior.floating,
+                  dismissDirection: direction,
                 );
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
