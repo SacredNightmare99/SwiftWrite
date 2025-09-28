@@ -30,15 +30,22 @@ class HomeScreen extends StatelessWidget {
               key: Key(note.key.toString()),
               direction: DismissDirection.endToStart,
               onDismissed: (direction) {
-                _noteController.deleteNote(note.key);
-                
-                final snackBar = SnackBar(
-                  content: Text('The note "${note.title}" has been deleted.'),
-                  duration: Duration(seconds: 5),
-                  behavior: SnackBarBehavior.floating,
-                  dismissDirection: direction,
+                final deletedNote = note;
+                _noteController.deleteNote(deletedNote.key);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('The note "${deletedNote.title}" has been deleted.'),
+                    duration: const Duration(seconds: 2),
+                    dismissDirection: direction,
+                    action: SnackBarAction(
+                      label: "Undo",
+                      onPressed: () {
+                        _noteController.addNote(deletedNote);
+                      },
+                    ),
+                  ),
                 );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
               background: Container(
                 alignment: Alignment.centerRight,
