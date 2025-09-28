@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
@@ -48,10 +49,17 @@ class WriterScreenState extends State<WriterScreen> {
     }
 
     if (_existingNote != null) {
+      final isNewNote = !_noteController.notes.any((note) => note.key == _existingNote!.key);
+
       _existingNote!.title = title;
       _existingNote!.content = content;
       _existingNote!.updatedAt = DateTime.now();
-      _noteController.updateNote(_existingNote!.key, _existingNote!);
+
+      if (isNewNote) {
+        _noteController.addNote(_existingNote!);
+      } else {
+        _noteController.updateNote(_existingNote!.key, _existingNote!);
+      }
     } else {
       final newNote = Note(
         title: title.isEmpty ? "New Note" : title,
@@ -84,6 +92,35 @@ class WriterScreenState extends State<WriterScreen> {
     );
   }
 
+  Future<void> _saveNoteToFile() async {
+    final rawTitle = _titleController.text.trim();
+    final content = _contentController.text;
+
+    String fileName = rawTitle.isNotEmpty ? rawTitle : 'note';
+    if (!fileName.contains('.')) {
+      fileName = '$fileName.txt';
+    }
+
+    try {
+      final result = await FilePicker.platform.saveFile(
+        dialogTitle: 'Save your note',
+        fileName: fileName,
+        bytes: Uint8List.fromList(content.codeUnits),
+      );
+
+      if (result != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Note saved'),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle the error
+      debugPrint("Error Saving: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -113,6 +150,10 @@ class WriterScreenState extends State<WriterScreen> {
                     _isPreview = !_isPreview;
                   });
                 },
+              ),
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: _saveNoteToFile,
               ),
               IconButton(
                 icon: const Icon(Icons.share),
