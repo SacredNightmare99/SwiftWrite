@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/models/note.dart';
@@ -60,13 +63,21 @@ class WriterScreenState extends State<WriterScreen> {
     }
   }
 
-  void _shareNote() {
-    final title = _titleController.text;
+  Future<void> _shareNote() async {
+    final title = _titleController.text.trim();
     final content = _contentController.text;
 
-    if (content.isNotEmpty) {
-      Share.share(content, subject: title);
-    }
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/${title.isNotEmpty ? title : 'note'}.txt');
+
+    await file.writeAsString(content);
+
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(file.path)],
+        text: 'Sharing: $title',
+      )
+    );
   }
 
   @override
@@ -76,50 +87,53 @@ class WriterScreenState extends State<WriterScreen> {
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) _saveNote();
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: _isPreview
-              ? Text(_titleController.text)
-              : TextField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    hintText: 'Title',
-                    border: InputBorder.none,
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          appBar: AppBar(
+            title: _isPreview
+                ? Text(_titleController.text)
+                : TextField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      hintText: 'Title',
+                      border: InputBorder.none,
+                    ),
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-          actions: [
-            IconButton(
-              icon: Icon(_isPreview ? Icons.visibility_off : Icons.visibility),
-              onPressed: () {
-                setState(() {
-                  _isPreview = !_isPreview;
-                });
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: _shareNote,
-            ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _isPreview
-              ? Markdown(
-                  data: _contentController.text,
-                  styleSheet: _getMarkdownStyleSheet(),
-                )
-              : TextField(
-                  controller: _contentController,
-                  maxLines: null,
-                  expands: true,
-                  decoration: const InputDecoration(
-                    hintText: 'Start writing...',
-                    border: InputBorder.none,
+            actions: [
+              IconButton(
+                icon: Icon(_isPreview ? Icons.visibility_off : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _isPreview = !_isPreview;
+                  });
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: _shareNote,
+              ),
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _isPreview
+                ? Markdown(
+                    data: _contentController.text,
+                    styleSheet: _getMarkdownStyleSheet(),
+                  )
+                : TextField(
+                    controller: _contentController,
+                    maxLines: null,
+                    expands: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Start writing...',
+                      border: InputBorder.none,
+                    ),
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+          ),
         ),
       ),
     );
@@ -154,7 +168,7 @@ class WriterScreenState extends State<WriterScreen> {
       del: const TextStyle(decoration: TextDecoration.lineThrough),
       blockquote: textTheme.bodyMedium?.copyWith(
         fontStyle: FontStyle.italic,
-        color: textTheme.bodyMedium?.color?.withOpacity(0.7),
+        color: textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
       ),
       blockquoteDecoration: BoxDecoration(
         color: theme.cardColor,
@@ -166,7 +180,7 @@ class WriterScreenState extends State<WriterScreen> {
         backgroundColor: theme.cardColor,
       ),
       codeblockDecoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: theme.dividerColor),
       ),
