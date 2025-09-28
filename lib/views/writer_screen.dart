@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/models/note.dart';
 
 class WriterScreen extends StatefulWidget {
-  
   const WriterScreen({super.key});
 
   @override
@@ -16,6 +17,7 @@ class WriterScreenState extends State<WriterScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   Note? _existingNote;
+  bool _isPreview = false;
 
   @override
   void initState() {
@@ -49,12 +51,21 @@ class WriterScreenState extends State<WriterScreen> {
       _noteController.updateNote(_existingNote!.key, _existingNote!);
     } else {
       final newNote = Note(
-        title: title.isEmpty? "New Note" : title,
+        title: title.isEmpty ? "New Note" : title,
         content: content,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
       _noteController.addNote(newNote);
+    }
+  }
+
+  void _shareNote() {
+    final title = _titleController.text;
+    final content = _contentController.text;
+
+    if (content.isNotEmpty) {
+      Share.share(content, subject: title);
     }
   }
 
@@ -67,27 +78,45 @@ class WriterScreenState extends State<WriterScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: TextField(
-            controller: _titleController,
-            decoration: const InputDecoration(
-              hintText: 'Title',
-              border: InputBorder.none,
+          title: _isPreview
+              ? Text(_titleController.text)
+              : TextField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    hintText: 'Title',
+                    border: InputBorder.none,
+                  ),
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+          actions: [
+            IconButton(
+              icon: Icon(_isPreview ? Icons.visibility_off : Icons.visibility),
+              onPressed: () {
+                setState(() {
+                  _isPreview = !_isPreview;
+                });
+              },
             ),
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: _shareNote,
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            controller: _contentController,
-            maxLines: null,
-            expands: true,
-            decoration: const InputDecoration(
-              hintText: 'Start writing...',
-              border: InputBorder.none,
-            ),
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
+          child: _isPreview
+              ? Markdown(data: _contentController.text)
+              : TextField(
+                  controller: _contentController,
+                  maxLines: null,
+                  expands: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Start writing...',
+                    border: InputBorder.none,
+                  ),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
         ),
       ),
     );

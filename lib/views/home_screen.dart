@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Writer'),
+        title: const Text('SwiftWrite'),
         actions: [
           IconButton(
             icon: const Icon(Icons.brightness_6),
