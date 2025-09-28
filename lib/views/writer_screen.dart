@@ -64,19 +64,23 @@ class WriterScreenState extends State<WriterScreen> {
   }
 
   Future<void> _shareNote() async {
-    final title = _titleController.text.trim();
+    final rawTitle = _titleController.text.trim();
     final content = _contentController.text;
-
     final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/${title.isNotEmpty ? title : 'note'}.txt');
 
+    String fileName = rawTitle.isNotEmpty ? rawTitle : 'note';
+    if (!fileName.contains('.')) {
+      fileName = '$fileName.txt';
+    }
+
+    final file = File('${dir.path}/$fileName');
     await file.writeAsString(content);
 
     await SharePlus.instance.share(
       ShareParams(
         files: [XFile(file.path)],
-        text: 'Sharing: $title',
-      )
+        text: 'Sharing: $fileName',
+      ),
     );
   }
 
