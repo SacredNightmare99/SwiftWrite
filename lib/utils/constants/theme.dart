@@ -49,7 +49,32 @@ class AppTheme {
       actionTextColor: AppColors.primaryColorLight,
       behavior: SnackBarBehavior.floating,
     ),
-  );
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.cardColorLight,
+      labelStyle: const TextStyle(color: AppColors.textColorLight, fontSize: 14, fontWeight: FontWeight.w500),
+      selectedColor: AppColors.primaryColorLight,
+      secondaryLabelStyle: const TextStyle(color: AppColors.backgroundColorLight),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(
+          color: AppColors.cardColorDark,
+          width: 2
+        )
+      ),
+      deleteIconColor: AppColors.textColorLight,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.cardColorLight,
+      hintStyle: TextStyle(color: AppColors.textColorLight.withValues(alpha: 0.5)),
+      prefixIconColor: AppColors.textColorLight,
+      suffixIconColor: AppColors.textColorLight,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide.none,
+      ),
+    ),
+    iconTheme: const IconThemeData(color: AppColors.textColorLight));
 
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
@@ -96,5 +121,30 @@ class AppTheme {
       actionTextColor: AppColors.primaryColorLight,
       behavior: SnackBarBehavior.floating,
     ),
-  );
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.cardColorDark,
+      labelStyle: const TextStyle(color: AppColors.textColorDark, fontSize: 14, fontWeight: FontWeight.w500),
+      selectedColor: AppColors.primaryColorDark,
+      secondaryLabelStyle: const TextStyle(color: AppColors.backgroundColorDark),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(
+          color: AppColors.cardColorLight,
+          width: 2
+        )
+      ),
+      deleteIconColor: AppColors.textColorDark,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.cardColorDark,
+      hintStyle: TextStyle(color: AppColors.textColorDark.withValues(alpha: 0.5)),
+      prefixIconColor: AppColors.textColorDark,
+      suffixIconColor: AppColors.textColorDark,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide.none,
+      ),
+    ),
+    iconTheme: const IconThemeData(color: AppColors.textColorDark));
 }

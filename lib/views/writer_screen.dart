@@ -20,8 +20,10 @@ class WriterScreenState extends State<WriterScreen> {
   final NoteController _noteController = Get.find();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+  final TextEditingController _tagController = TextEditingController();
   Note? _existingNote;
   bool _isPreview = false;
+  List<String> _tags = [];
 
   @override
   void initState() {
@@ -30,6 +32,7 @@ class WriterScreenState extends State<WriterScreen> {
       _existingNote = Get.arguments as Note;
       _titleController.text = _existingNote!.title;
       _contentController.text = _existingNote!.content;
+      _tags = List<String>.from(_existingNote!.tags);
     }
   }
 
@@ -37,6 +40,7 @@ class WriterScreenState extends State<WriterScreen> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
+    _tagController.dispose();
     super.dispose();
   }
 
@@ -54,6 +58,7 @@ class WriterScreenState extends State<WriterScreen> {
       _existingNote!.title = title;
       _existingNote!.content = content;
       _existingNote!.updatedAt = DateTime.now();
+      _existingNote!.tags = _tags;
 
       if (isNewNote) {
         _noteController.addNote(_existingNote!);
@@ -66,6 +71,7 @@ class WriterScreenState extends State<WriterScreen> {
         content: content,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
+        tags: _tags,
       );
       _noteController.addNote(newNote);
     }
@@ -121,6 +127,22 @@ class WriterScreenState extends State<WriterScreen> {
     }
   }
 
+  void _addTag(String tag) {
+    final newTag = tag.trim();
+    if (newTag.isNotEmpty && !_tags.contains(newTag)) {
+      setState(() {
+        _tags.add(newTag);
+        _tagController.clear();
+      });
+    }
+  }
+
+  void _removeTag(String tag) {
+    setState(() {
+      _tags.remove(tag);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -139,6 +161,7 @@ class WriterScreenState extends State<WriterScreen> {
                     decoration: const InputDecoration(
                       hintText: 'Title',
                       border: InputBorder.none,
+                      filled: false
                     ),
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
@@ -168,15 +191,40 @@ class WriterScreenState extends State<WriterScreen> {
                     data: _contentController.text,
                     styleSheet: _getMarkdownStyleSheet(),
                   )
-                : TextField(
-                    controller: _contentController,
-                    maxLines: null,
-                    expands: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Start writing...',
-                      border: InputBorder.none,
-                    ),
-                    style: Theme.of(context).textTheme.bodyLarge,
+                : Column(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _contentController,
+                          maxLines: null,
+                          expands: true,
+                          decoration: const InputDecoration(
+                            hintText: 'Start writing...',
+                            border: InputBorder.none,
+                            filled: false
+                          ),
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        children: _tags.map((tag) {
+                          return Chip(
+                            label: Text(tag),
+                            onDeleted: () => _removeTag(tag),
+                          );
+                        }).toList(),
+                      ),
+                      TextField(
+                        controller: _tagController,
+                        decoration: const InputDecoration(
+                          hintText: 'Add a tag...',
+                        ),
+                        onSubmitted: _addTag,
+                      ),
+                    ],
                   ),
           ),
         ),

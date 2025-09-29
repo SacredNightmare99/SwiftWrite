@@ -34,6 +34,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NoteController noteController = Get.put(NoteController());
+    final TextEditingController searchController = TextEditingController();
 
     return SafeArea(
       top: false,
@@ -51,48 +52,82 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: Obx(
-          () => ListView.builder(
-            itemCount: noteController.notes.length,
-            itemBuilder: (context, index) {
-              final note = noteController.notes[index];
-              return Dismissible(
-                key: Key(note.key.toString()),
-                direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  final deletedNote = note;
-                  noteController.deleteNote(deletedNote.key);
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('The note "${deletedNote.title}" has been deleted.'),
-                      duration: const Duration(seconds: 2),
-                      dismissDirection: direction,
-                      action: SnackBarAction(
-                        label: "Undo",
-                        onPressed: () {
-                          noteController.addNote(deletedNote);
-                        },
-                      ),
-                    ),
-                  );
-                },
-                background: Container(
-                  alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.only(right: 20.0),
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.error,
-                    borderRadius: BorderRadius.circular(10),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: searchController,
+                decoration: const InputDecoration(
+                  hintText: 'Search notes...',
+                  prefixIcon: Icon(Icons.search),
+                ),
+                onChanged: noteController.setSearchQuery,
+              ),
+              const SizedBox(height: 10),
+              Obx(
+                () => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Wrap(
+                    spacing: 8.0,
+                    children: noteController.uniqueTags.map((tag) {
+                      return ChoiceChip(
+                        label: Text(tag),
+                        selected: noteController.selectedTag.value == tag,
+                        onSelected: (_) => noteController.setSeletedTag(tag),
+                      );
+                    }).toList(),
                   ),
-                  child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
                 ),
-                child: NoteTile(
-                  note: note,
-                  onTap: () => Get.toNamed('/writer', arguments: note),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: Obx(
+                  () => ListView.builder(
+                    itemCount: noteController.filteredNotes.length,
+                    itemBuilder: (context, index) {
+                      final note = noteController.filteredNotes[index];
+                      return Dismissible(
+                        key: Key(note.key.toString()),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          final deletedNote = note;
+                          noteController.deleteNote(deletedNote.key);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('The note "${deletedNote.title}" has been deleted.'),
+                              duration: const Duration(seconds: 2),
+                              dismissDirection: direction,
+                              action: SnackBarAction(
+                                label: "Undo",
+                                onPressed: () {
+                                  noteController.addNote(deletedNote);
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 20.0),
+                          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.error,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
+                        ),
+                        child: NoteTile(
+                          note: note,
+                          onTap: () => Get.toNamed('/writer', arguments: note),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              );
-            },
+              ),
+            ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
