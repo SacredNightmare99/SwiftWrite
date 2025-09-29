@@ -11,23 +11,27 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   void _openFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-    );
-
-    if (result != null) {
-      final file = File(result.files.single.path!);
-      final content = await file.readAsString();
-      final title = result.files.single.name;
-
-      final newNote = Note(
-        title: title,
-        content: content,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.any,
       );
 
-      Get.toNamed('/writer', arguments: newNote);
+      if (result != null) {
+        final file = File(result.files.single.path!);
+        final content = await file.readAsString();
+        final title = result.files.single.name;
+
+        final newNote = Note(
+          title: title,
+          content: content,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        Get.toNamed('/writer', arguments: newNote);
+      }
+    } catch (e) {
+        throw Exception("Error opening file: $e");
     }
   }
 
