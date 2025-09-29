@@ -2,12 +2,12 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/models/note.dart';
+import 'package:writer/utils/widgets/markdown_view.dart';
 
 class WriterScreen extends StatefulWidget {
   const WriterScreen({super.key});
@@ -20,8 +20,10 @@ class WriterScreenState extends State<WriterScreen> {
   final NoteController _noteController = Get.find();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+  final TextEditingController _tagController = TextEditingController();
   Note? _existingNote;
   bool _isPreview = false;
+  List<String> _tags = [];
 
   @override
   void initState() {
@@ -30,6 +32,7 @@ class WriterScreenState extends State<WriterScreen> {
       _existingNote = Get.arguments as Note;
       _titleController.text = _existingNote!.title;
       _contentController.text = _existingNote!.content;
+      _tags = List<String>.from(_existingNote!.tags);
     }
   }
 
@@ -37,6 +40,7 @@ class WriterScreenState extends State<WriterScreen> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
+    _tagController.dispose();
     super.dispose();
   }
 
@@ -54,6 +58,7 @@ class WriterScreenState extends State<WriterScreen> {
       _existingNote!.title = title;
       _existingNote!.content = content;
       _existingNote!.updatedAt = DateTime.now();
+      _existingNote!.tags = _tags;
 
       if (isNewNote) {
         _noteController.addNote(_existingNote!);
@@ -66,6 +71,7 @@ class WriterScreenState extends State<WriterScreen> {
         content: content,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
+        tags: _tags,
       );
       _noteController.addNote(newNote);
     }
@@ -121,6 +127,22 @@ class WriterScreenState extends State<WriterScreen> {
     }
   }
 
+  void _addTag(String tag) {
+    final newTag = tag.trim();
+    if (newTag.isNotEmpty && !_tags.contains(newTag)) {
+      setState(() {
+        _tags.add(newTag);
+        _tagController.clear();
+      });
+    }
+  }
+
+  void _removeTag(String tag) {
+    setState(() {
+      _tags.remove(tag);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -139,6 +161,7 @@ class WriterScreenState extends State<WriterScreen> {
                     decoration: const InputDecoration(
                       hintText: 'Title',
                       border: InputBorder.none,
+                      filled: false
                     ),
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
@@ -164,96 +187,48 @@ class WriterScreenState extends State<WriterScreen> {
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: _isPreview
-                ? Markdown(
-                    data: _contentController.text,
-                    styleSheet: _getMarkdownStyleSheet(),
-                  )
-                : TextField(
-                    controller: _contentController,
-                    maxLines: null,
-                    expands: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Start writing...',
-                      border: InputBorder.none,
+            ? MarkdownView(
+                data: _contentController.text,
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _contentController,
+                      maxLines: null,
+                      expands: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Start writing...',
+                        border: InputBorder.none,
+                        filled: false
+                      ),
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: _tags.map((tag) {
+                      return Chip(
+                        label: Text(tag),
+                        onDeleted: () => _removeTag(tag),
+                      );
+                    }).toList(),
+                  ),
+                  TextField(
+                    controller: _tagController,
+                    decoration: const InputDecoration(
+                      hintText: 'Add a tag...',
+                    ),
+                    onSubmitted: _addTag,
+                  ),
+                ],
+              ),
           ),
         ),
       ),
     );
   }
 
-  MarkdownStyleSheet _getMarkdownStyleSheet() {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
-
-    return MarkdownStyleSheet(
-      a: TextStyle(
-        color: colorScheme.primary,
-        decoration: TextDecoration.underline,
-      ),
-      p: textTheme.bodyLarge,
-      pPadding: const EdgeInsets.symmetric(vertical: 4),
-      h1: textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
-      h1Padding: const EdgeInsets.symmetric(vertical: 8),
-      h2: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-      h2Padding: const EdgeInsets.symmetric(vertical: 6),
-      h3: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
-      h3Padding: const EdgeInsets.symmetric(vertical: 4),
-      h4: textTheme.titleLarge,
-      h4Padding: const EdgeInsets.symmetric(vertical: 4),
-      h5: textTheme.titleMedium,
-      h5Padding: const EdgeInsets.symmetric(vertical: 2),
-      h6: textTheme.titleSmall,
-      h6Padding: const EdgeInsets.symmetric(vertical: 2),
-      em: const TextStyle(fontStyle: FontStyle.italic),
-      strong: const TextStyle(fontWeight: FontWeight.bold),
-      del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: textTheme.bodyMedium?.copyWith(
-        fontStyle: FontStyle.italic,
-        color: textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
-      ),
-      blockquoteDecoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(8),
-        border: Border(left: BorderSide(color: theme.dividerColor, width: 4)),
-      ),
-      code: textTheme.bodyMedium?.copyWith(
-        fontFamily: 'monospace',
-        backgroundColor: theme.cardColor,
-      ),
-      codeblockDecoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: theme.dividerColor),
-      ),
-      blockSpacing: 8.0,
-      listIndent: 24.0,
-      listBullet: const TextStyle(fontSize: 16),
-      checkbox: const TextStyle(fontSize: 16),
-      unorderedListAlign: WrapAlignment.start,
-      orderedListAlign: WrapAlignment.start,
-      tableHead: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-      tableBody: textTheme.bodyMedium,
-      tableBorder: TableBorder.all(color: theme.dividerColor),
-      tableColumnWidth: const IntrinsicColumnWidth(),
-      tableCellsDecoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: theme.dividerColor),
-          right: BorderSide(color: theme.dividerColor),
-          bottom: BorderSide(color: theme.dividerColor),
-          left: BorderSide(color: theme.dividerColor),
-        ),
-      ),
-      tableCellsPadding: const EdgeInsets.all(6),
-      horizontalRuleDecoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(width: 1.0, color: theme.dividerColor),
-        ),
-      ),
-      img: textTheme.bodyMedium,
-    );
-  }
 }
