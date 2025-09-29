@@ -48,7 +48,9 @@ class NoteController extends GetxController {
 
   void _updateUniqueTags() {
     final allTags = notes.expand((note) => note.tags).toSet();
-    uniqueTags.value = allTags;
+    uniqueTags
+      ..clear()
+      ..addAll(allTags);
   }
 
   void setSearchQuery(String query) {
