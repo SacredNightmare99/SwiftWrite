@@ -9,10 +9,10 @@ class NoteTile extends StatelessWidget {
   const NoteTile({super.key, required this.note, this.onTap});
 
   String formatDateTime(DateTime dt) {
-    final time = DateFormat.Hm().format(dt); // 22:30
-    final day = DateFormat('d').format(dt); // 17
-    final suffix = _daySuffix(dt.day); // th
-    final month = DateFormat('MMM').format(dt); // Feb
+    final time = DateFormat.Hm().format(dt);
+    final day = DateFormat('d').format(dt);
+    final suffix = _daySuffix(dt.day);
+    final month = DateFormat('MMM').format(dt);
     return '$time @$day$suffix $month';
   }
 

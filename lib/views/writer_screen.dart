@@ -122,8 +122,7 @@ class WriterScreenState extends State<WriterScreen> {
         );
       }
     } catch (e) {
-      // Handle the error
-      debugPrint("Error Saving: $e");
+      throw Exception("Error saving note: $e");
     }
   }
 
