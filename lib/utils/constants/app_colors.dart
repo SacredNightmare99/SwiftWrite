@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   const AppColors._();
 
+  // Light
   static const Color primaryColorLight = Color(0xFF458588); // Blue
   static const Color secondaryColorLight = Color(0xFF98971A); // Green
   static const Color backgroundColorLight = Color(0xFFFBF1C7); // Background
@@ -11,6 +12,7 @@ class AppColors {
   static const Color destructiveColorLight = Color(0xFF9D0006); // Red
   static const Color dividerColorLight = Color(0xFFD5C4A1);
 
+  // Dark
   static const Color primaryColorDark = Color(0xFF83A598); // Blue
   static const Color secondaryColorDark = Color(0xFFB8BB26); // Green
   static const Color backgroundColorDark = Color(0xFF282828); // Background
@@ -19,5 +21,6 @@ class AppColors {
   static const Color destructiveColorDark = Color(0xFFCC241D); // Red
   static const Color dividerColorDark = Color(0xFF504945);
 
+  // Shared
   static const Color onErrorColor = Color(0xFFFBF1C7);
 }
