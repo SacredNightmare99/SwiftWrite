@@ -22,7 +22,6 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
   - Basic syntax highlighting (headers, bold, italics, links, lists).
 - **Storage:**
   - Local offline storage (Hive).
-  - Export to `.md` and `.txt`.
 - **Search:** Fast in-app note search.
 - **Tagging:** Organize notes with tags.
 - **Themes:** Light and dark mode.
@@ -32,14 +31,9 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
 ## 3. Extended Features (v2)
 
 - **Code snippets:**
-  - Syntax highlighting in code blocks.
+  - Syntax highlighting in markdown preview for code blocks enclosed with ```.
+  - Automatic syntax highlighting for notes with code-like extensions (e.g., `main.py`, `hello.c`).
   - Support for at least 5–10 languages.
-- **Export options:** PDF, HTML, DOCX.
-- **Keyboard shortcuts:**
-  - Ctrl+B = Bold
-  - Ctrl+I = Italic
-  - Ctrl+K = Insert link
-- **Multi-device sync:** Supabase or Firebase.
 - **Rich blocks (optional, future):** To-do lists, headings, quotes, embedded media.
 
 ---
@@ -49,6 +43,7 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
 - Real-time collaboration.
 - Heavy WYSIWYG editing.
 - Multi-user workspace.
+- Cloud sync.
 
 ---
 
@@ -65,7 +60,7 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
 - **Editor:** Flutter `EditableText` for raw performance.
 - **Markdown Rendering:** `flutter_markdown` or custom renderer for preview.
 - **Code Highlighting:** `highlight.dart` for code syntax.
-- **Storage:** Hive for MVP, abstracted storage layer for future cloud sync.
+- **Storage:** Hive for MVP.
 - **State Management:** GetX.
 
 ---
@@ -100,15 +95,11 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
   - Allow users to tap a note to open it in the editor.
   - Implement swipe-to-delete functionality.
 
-### Phase 3: Markdown & Export
+### Phase 3: Markdown Preview
 
 - **Markdown Preview:**
   - Integrate the `flutter_markdown` package.
   - Add a toggle button on the editor screen to switch between the raw text editor and a read-only markdown preview.
-- **Export:**
-  - Implement "Export to `.md`" functionality.
-  - Implement "Export to `.txt`" functionality.
-  - Use the `share_plus` package to bring up the native share sheet.
 
 ### Phase 4: Search & Organization
 
@@ -130,3 +121,23 @@ Build a high-performance writer app focused on **speed, efficiency, and markdown
   - Refine UI/UX based on initial testing.
   - Ensure a smooth and intuitive user flow.
   - Fix any outstanding bugs.
+
+### Phase 6: Code Snippet Highlighting
+
+- **Integration:**
+  - Integrate the `highlight.dart` package or a similar syntax highlighting library.
+  - Add language detection for code blocks (```) and based on note title extension.
+- **UI:**
+  - Render highlighted code within the markdown preview.
+  - Ensure the code blocks are styled correctly in both light and dark themes.
+
+### Phase 7: Public Release
+
+- **App Store Preparation:**
+  - Create app icons and splash screens.
+  - Prepare listings for the App Store and Google Play.
+- **Deployment:**
+  - Build and sign release versions of the app.
+  - Publish to the respective app stores.
+- **Marketing:**
+  - Announce the release on social media and relevant forums.

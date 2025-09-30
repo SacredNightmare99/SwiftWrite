@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:writer/data/models/note.dart';
 import 'package:writer/data/services/theme_service.dart';
 import 'package:writer/utils/constants/app_routes.dart';
-import 'package:writer/utils/constants/theme.dart';
+import 'package:writer/utils/themes/theme.dart';
 
 void main() async {
   await Hive.initFlutter();

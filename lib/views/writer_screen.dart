@@ -188,6 +188,7 @@ class WriterScreenState extends State<WriterScreen> {
             child: _isPreview
             ? MarkdownView(
                 data: _contentController.text,
+                title: _titleController.text,
               )
             : Column(
                 children: [
