@@ -1,39 +1,12 @@
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:writer/controllers/note_controller.dart';
-import 'package:writer/data/models/note.dart';
 import 'package:writer/data/services/theme_service.dart';
+import 'package:writer/utils/helpers/helpers.dart';
 import 'package:writer/utils/widgets/note_tile.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  void _openFile() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.any,
-      );
-
-      if (result != null) {
-        final file = File(result.files.single.path!);
-        final content = await file.readAsString();
-        final title = result.files.single.name;
-
-        final newNote = Note(
-          title: title,
-          content: content,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-
-        Get.toNamed('/writer', arguments: newNote);
-      }
-    } catch (e) {
-        throw Exception("Error opening file: $e");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +21,7 @@ class HomeScreen extends StatelessWidget {
           actions: [
             IconButton(
               icon: const Icon(Icons.file_open_outlined),
-              onPressed: () => _openFile(),
+              onPressed: () => AppHelpers.openFile(),
             ),
             IconButton(
               icon: const Icon(Icons.brightness_6),
@@ -125,6 +98,7 @@ class HomeScreen extends StatelessWidget {
                         child: NoteTile(
                           note: note,
                           onTap: () => Get.toNamed('/writer', arguments: note),
+                          onLongPress: () => AppHelpers.showNoteOptions(context, note),
                         ),
                       );
                     },
