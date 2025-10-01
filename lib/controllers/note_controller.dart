@@ -28,7 +28,41 @@ class NoteController extends GetxController {
 
   void fetchAllNotes() {
     notes.value = _databaseService.getAllNotes();
+    final notesWithNullOrder = notes.where((n) => n.order == null).toList();
+    if (notesWithNullOrder.isNotEmpty) {
+      int maxOrder = notes.map((n) => n.order ?? -1).reduce((a, b) => a > b ? a : b);
+      for (var note in notesWithNullOrder) {
+        maxOrder++;
+        note.order = maxOrder;
+        _databaseService.updateNote(note.key, note);
+      }
+      notes.value = _databaseService.getAllNotes();
+    }
     _updateUniqueTags();
+  }
+
+  void reorderNotes(int oldIndex, int newIndex) async {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+
+    final List<Note> currentList = filteredNotes.toList();
+    final Note movedNote = currentList.removeAt(oldIndex);
+    currentList.insert(newIndex, movedNote);
+
+    final reorderedKeys = currentList.map((n) => n.key).toSet();
+    final otherNotes = notes.where((n) => !reorderedKeys.contains(n.key)).toList();
+    final List<Note> fullNewOrder = [...currentList, ...otherNotes];
+
+    for (int i = 0; i < fullNewOrder.length; i++) {
+        final note = fullNewOrder[i];
+        if (note.order != i) {
+            note.order = i;
+            _databaseService.updateNote(note.key, note);
+        }
+    }
+
+    fetchAllNotes();
   }
 
   void addNote(Note note) {

@@ -22,7 +22,7 @@ class WriterScreenState extends State<WriterScreen> {
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _tagController = TextEditingController();
   Note? _existingNote;
-  bool _isPreview = false;
+  bool _isPreview = true;
   List<String> _tags = [];
 
   @override
@@ -144,6 +144,10 @@ class WriterScreenState extends State<WriterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_contentController.text.isEmpty) {
+      _isPreview = false;
+    }
+
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
@@ -188,6 +192,7 @@ class WriterScreenState extends State<WriterScreen> {
             child: _isPreview
             ? MarkdownView(
                 data: _contentController.text,
+                title: _titleController.text,
               )
             : Column(
                 children: [

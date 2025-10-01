@@ -147,4 +147,5 @@ class AppTheme {
       ),
     ),
     iconTheme: const IconThemeData(color: AppColors.textColorDark));
+
 }
