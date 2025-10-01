@@ -17,6 +17,8 @@ class DatabaseService {
   }
 
   List<Note> getAllNotes() {
-    return _noteBox.values.toList();
+    final notes = _noteBox.values.toList();
+    notes.sort((a, b) => (a.order ?? 0).compareTo(b.order ?? 0));
+    return notes;
   }
 }

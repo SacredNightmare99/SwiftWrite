@@ -19,11 +19,15 @@ class Note extends HiveObject {
   @HiveField(4)
   List<String> tags;
 
+  @HiveField(5)
+  int? order;
+
   Note({
     required this.title,
     required this.content,
     required this.createdAt,
     required this.updatedAt,
     this.tags = const [],
+    this.order,
   });
 }

@@ -60,7 +60,18 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 10),
               Expanded(
                 child: Obx(
-                  () => ListView.builder(
+                  () => ReorderableListView.builder(
+                    onReorder: (oldIndex, newIndex) {
+                      noteController.reorderNotes(oldIndex, newIndex);
+                    },
+                    proxyDecorator: (Widget child, int index, Animation<double> animation) {
+                      return Material(
+                        color: Theme.of(context).cardColor,
+                        elevation: 6.0,
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: child,
+                      );
+                    },
                     itemCount: noteController.filteredNotes.length,
                     itemBuilder: (context, index) {
                       final note = noteController.filteredNotes[index];
@@ -97,6 +108,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         child: NoteTile(
                           note: note,
+                          index: index,
                           onTap: () => Get.toNamed('/writer', arguments: note),
                           onLongPress: () => AppHelpers.showNoteOptions(context, note),
                         ),
