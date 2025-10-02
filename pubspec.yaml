@@ -39,7 +39,7 @@ dependencies:
   hive_flutter: ^1.1.0
   path_provider: ^2.1.5
   intl: ^0.20.2
-  flutter_markdown: ^0.7.7+1
+  flutter_markdown_plus: ^1.0.5
   share_plus: ^12.0.0
   file_picker: ^10.3.3
 
@@ -49,6 +49,12 @@ dev_dependencies:
   hive_generator: ^2.0.1
   build_runner: ^2.4.13
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icons8-notepad-96.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

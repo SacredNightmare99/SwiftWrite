@@ -1,4 +1,4 @@
-# Writer
+# SwiftWrite
 
 A high-performance, cross-platform writer app built with Flutter, focused on speed, efficiency, and Markdown support.
 
