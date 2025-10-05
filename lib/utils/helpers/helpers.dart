@@ -61,6 +61,7 @@ class AppHelpers {
           content: content,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
+          fileExtension: title.contains('.') ? title.split('.').last : null,
         );
 
         Get.toNamed('/writer', arguments: newNote);
@@ -74,46 +75,48 @@ class AppHelpers {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share'),
-              onTap: () {
-                Navigator.pop(context);
-                shareNote(note);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.save),
-              title: const Text('Save'),
-              onTap: () {
-                Navigator.pop(context);
-                saveNoteToFile(context, note);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete),
-              title: const Text('Delete'),
-              onTap: () {
-                Navigator.pop(context);
-                final noteController = Get.find<NoteController>();
-                noteController.deleteNote(note.key);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('The note "${note.title}" has been deleted.'),
-                    duration: const Duration(seconds: 2),
-                    action: SnackBarAction(
-                      label: "Undo",
-                      onPressed: () {
-                        noteController.addNote(note);
-                      },
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.share),
+                title: const Text('Share'),
+                onTap: () {
+                  Navigator.pop(context);
+                  shareNote(note);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.save),
+                title: const Text('Save'),
+                onTap: () {
+                  Navigator.pop(context);
+                  saveNoteToFile(context, note);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete'),
+                onTap: () {
+                  Navigator.pop(context);
+                  final noteController = Get.find<NoteController>();
+                  noteController.deleteNote(note.key);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('The note "${note.title}" has been deleted.'),
+                      duration: const Duration(seconds: 2),
+                      action: SnackBarAction(
+                        label: "Undo",
+                        onPressed: () {
+                          noteController.addNote(note);
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );
@@ -122,7 +125,10 @@ class AppHelpers {
   static Future<void> shareNote(Note note) async {
     final dir = await getTemporaryDirectory();
     String fileName = note.title.isNotEmpty ? note.title : 'note';
-    if (!fileName.contains('.')) {
+    final fileExtension = note.fileExtension;
+    if (fileExtension != null && !fileName.endsWith('.$fileExtension')) {
+      fileName = '$fileName.$fileExtension';
+    } else if (fileExtension == null && !fileName.contains('.')) {
       fileName = '$fileName.txt';
     }
     final file = File('${dir.path}/$fileName');
@@ -137,7 +143,10 @@ class AppHelpers {
 
   static Future<void> saveNoteToFile(BuildContext context, Note note) async {
     String fileName = note.title.isNotEmpty ? note.title : 'note';
-    if (!fileName.contains('.')) {
+    final fileExtension = note.fileExtension;
+    if (fileExtension != null && !fileName.endsWith('.$fileExtension')) {
+      fileName = '$fileName.$fileExtension';
+    } else if (fileExtension == null && !fileName.contains('.')) {
       fileName = '$fileName.txt';
     }
     try {

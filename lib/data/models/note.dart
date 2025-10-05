@@ -22,6 +22,9 @@ class Note extends HiveObject {
   @HiveField(5)
   int? order;
 
+  @HiveField(6)
+  String? fileExtension;
+
   Note({
     required this.title,
     required this.content,
@@ -29,5 +32,6 @@ class Note extends HiveObject {
     required this.updatedAt,
     this.tags = const [],
     this.order,
+    this.fileExtension,
   });
 }
