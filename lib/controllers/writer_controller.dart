@@ -1,15 +1,16 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_picker/file_picker.dart' hide FileType;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/models/note.dart';
+import 'package:writer/utils/helpers/file_type_analyzer.dart';
 
 class WriterController extends GetxController {
-  final NoteController noteController = Get.find();
+  final NoteController noteController = Get.find<NoteController>();
 
   final titleController = TextEditingController();
   final contentController = TextEditingController();
@@ -18,7 +19,7 @@ class WriterController extends GetxController {
   Note? existingNote;
   final isPreview = true.obs;
   final tags = <String>[].obs;
-  final type = Rx<String?>(null);
+  final type = FileType.plainText.obs;
 
   @override
   void onInit() {
@@ -28,14 +29,16 @@ class WriterController extends GetxController {
       titleController.text = existingNote!.title;
       contentController.text = existingNote!.content;
       tags.value = List<String>.from(existingNote!.tags);
-      type.value = existingNote!.fileExtension;
     }
     titleController.addListener(_updateFileType);
+    contentController.addListener(_updatePreviewState);
+    _updateFileType();
   }
 
   @override
   void onClose() {
     titleController.removeListener(_updateFileType);
+    contentController.removeListener(_updatePreviewState);
     titleController.dispose();
     contentController.dispose();
     tagController.dispose();
@@ -44,12 +47,19 @@ class WriterController extends GetxController {
 
   void _updateFileType() {
     final title = titleController.text;
-    String? newType;
+    String? newExtension;
     if (title.contains('.')) {
-      newType = title.split('.').last;
+      newExtension = title.split('.').last;
     }
-    if (newType != type.value) {
-      type.value = newType;
+    type.value = FileTypeAnalyzer.classifyExtension(newExtension);
+    _updatePreviewState();
+  }
+
+  void _updatePreviewState() {
+    if (type.value == FileType.markdown && contentController.text.isNotEmpty) {
+      isPreview.value = true;
+    } else {
+      isPreview.value = false;
     }
   }
 
@@ -61,6 +71,20 @@ class WriterController extends GetxController {
       return;
     }
 
+    String? extension;
+    if (title.contains('.')) {
+      extension = title.split('.').last;
+    }
+
+    final fileType = FileTypeAnalyzer.classifyExtension(extension);
+    String? finalExtension;
+
+    if (extension == null || fileType == FileType.unsupported) {
+      finalExtension = 'txt';
+    } else {
+      finalExtension = extension;
+    }
+
     if (existingNote != null) {
       final isNewNote = !noteController.notes.any((note) => note.key == existingNote!.key);
 
@@ -68,11 +92,7 @@ class WriterController extends GetxController {
       existingNote!.content = content;
       existingNote!.updatedAt = DateTime.now();
       existingNote!.tags = tags;
-      if (title.contains('.')) {
-        existingNote!.fileExtension = title.split('.').last;
-      } else {
-        existingNote!.fileExtension = null;
-      }
+      existingNote!.fileExtension = finalExtension;
 
       if (isNewNote) {
         noteController.addNote(existingNote!);
@@ -86,7 +106,7 @@ class WriterController extends GetxController {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
         tags: tags,
-        fileExtension: title.contains('.') ? title.split('.').last : null,
+        fileExtension: finalExtension,
       );
       noteController.addNote(newNote);
     }
@@ -98,10 +118,14 @@ class WriterController extends GetxController {
     final dir = await getTemporaryDirectory();
 
     String fileName = rawTitle.isNotEmpty ? rawTitle : 'note';
-    final fileExtension = existingNote?.fileExtension;
-    if (fileExtension != null && !fileName.endsWith('.$fileExtension')) {
-      fileName = '$fileName.$fileExtension';
-    } else if (fileExtension == null && !fileName.contains('.')) {
+    String? extension;
+
+    if (fileName.contains('.')) {
+      extension = fileName.split('.').last;
+    }
+
+    final fileType = FileTypeAnalyzer.classifyExtension(extension);
+    if (extension == null || fileType == FileType.unsupported) {
       fileName = '$fileName.txt';
     }
 
@@ -121,10 +145,14 @@ class WriterController extends GetxController {
     final content = contentController.text;
 
     String fileName = rawTitle.isNotEmpty ? rawTitle : 'note';
-    final fileExtension = existingNote?.fileExtension;
-    if (fileExtension != null && !fileName.endsWith('.$fileExtension')) {
-      fileName = '$fileName.$fileExtension';
-    } else if (fileExtension == null && !fileName.contains('.')) {
+    String? extension;
+
+    if (fileName.contains('.')) {
+      extension = fileName.split('.').last;
+    }
+
+    final fileType = FileTypeAnalyzer.classifyExtension(extension);
+    if (extension == null || fileType == FileType.unsupported) {
       fileName = '$fileName.txt';
     }
 

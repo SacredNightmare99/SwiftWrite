@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:writer/controllers/writer_controller.dart';
+import 'package:writer/utils/helpers/file_type_analyzer.dart';
 import 'package:writer/utils/widgets/markdown_view.dart';
 
 class WriterScreen extends GetView<WriterController> {
@@ -32,12 +33,32 @@ class WriterScreen extends GetView<WriterController> {
                   )),
             actions: [
               Obx(() {
-                if (controller.type.value == "md") {
+                if (controller.type.value == FileType.markdown) {
                   return IconButton(
                     icon: Icon(controller.isPreview.value ? Icons.visibility_off : Icons.visibility),
                     onPressed: controller.togglePreview,
                   );
                 }
+
+                if (controller.type.value == FileType.programmingLanguage) {
+                  return IconButton(
+                    icon: Icon(Icons.play_arrow_rounded),
+                    onPressed: () {},
+                  );
+                }
+
+                if (controller.type.value == FileType.unsupported || controller.type.value == FileType.plainText) {
+                  return Center(
+                    child: Chip(
+                      padding: const EdgeInsets.all(0),
+                      label: const Text('Plain Text'),
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      side: BorderSide(color: Theme.of(context).dividerColor, width: 2),
+                      labelStyle: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  );
+                }
+                
                 return const SizedBox.shrink();
               }),
               IconButton(
@@ -53,7 +74,7 @@ class WriterScreen extends GetView<WriterController> {
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Obx(() {
-              final showPreview = controller.isPreview.value && controller.type.value == 'md';
+              final showPreview = controller.isPreview.value && controller.type.value == FileType.markdown;
               if (showPreview) {
                  return MarkdownView(
                   data: controller.contentController.text,
