@@ -85,6 +85,8 @@ class WriterScreen extends GetView<WriterController> {
                   children: [
                     Expanded(
                       child: TextField(
+                        autocorrect: false,
+                        keyboardType: TextInputType.multiline,
                         controller: controller.contentController,
                         maxLines: null,
                         expands: true,

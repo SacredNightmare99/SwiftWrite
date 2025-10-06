@@ -56,7 +56,7 @@ class WriterController extends GetxController {
   }
 
   void _updatePreviewState() {
-    if (type.value == FileType.markdown && contentController.text.isNotEmpty) {
+    if (type.value == FileType.markdown && contentController.text.isNotEmpty && isPreview.value == true) {
       isPreview.value = true;
     } else {
       isPreview.value = false;
