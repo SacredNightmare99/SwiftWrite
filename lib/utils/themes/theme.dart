@@ -8,6 +8,10 @@ class AppTheme {
     brightness: Brightness.light,
     primaryColor: AppColors.primaryColorLight,
     scaffoldBackgroundColor: AppColors.backgroundColorLight,
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: AppColors.primaryColorLight,
+      circularTrackColor: AppColors.secondaryColorLight,
+    ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(color: AppColors.textColorLight, fontSize: 24, fontWeight: FontWeight.bold),
       headlineMedium: TextStyle(color: AppColors.textColorLight, fontSize: 22, fontWeight: FontWeight.bold),
@@ -80,6 +84,10 @@ class AppTheme {
     brightness: Brightness.dark,
     primaryColor: AppColors.primaryColorDark,
     scaffoldBackgroundColor: AppColors.backgroundColorDark,
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: AppColors.primaryColorDark,
+      circularTrackColor: AppColors.secondaryColorDark,
+    ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(color: AppColors.textColorDark, fontSize: 24, fontWeight: FontWeight.bold),
       headlineMedium: TextStyle(color: AppColors.textColorDark, fontSize: 22, fontWeight: FontWeight.bold),
