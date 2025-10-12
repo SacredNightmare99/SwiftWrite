@@ -49,7 +49,9 @@ class WriterScreen extends GetView<WriterController> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.play_arrow_rounded)),
-                    onPressed: controller.isLoading.value ? null : controller.runCode,
+                    onPressed: () {
+                      controller.isLoading.value ? null : controller.runCode(context);
+                    },
                   );
                 }
 
