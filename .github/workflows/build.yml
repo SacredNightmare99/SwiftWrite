@@ -29,6 +29,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
       - name: Build release APK
         run: flutter build apk --release
 
