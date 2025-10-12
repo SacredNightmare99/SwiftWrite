@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:writer/controllers/writer_controller.dart';
-import 'package:writer/utils/helpers/file_type_analyzer.dart';
+import 'package:writer/utils/constants/file_types.dart';
 import 'package:writer/utils/widgets/markdown_view.dart';
 
 class WriterScreen extends GetView<WriterController> {
@@ -42,8 +42,14 @@ class WriterScreen extends GetView<WriterController> {
 
                 if (controller.type.value == FileType.programmingLanguage) {
                   return IconButton(
-                    icon: Icon(Icons.play_arrow_rounded),
-                    onPressed: () {},
+                    icon: Obx(() => controller.isLoading.value
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.play_arrow_rounded)),
+                    onPressed: controller.isLoading.value ? null : controller.runCode,
                   );
                 }
 
@@ -78,7 +84,6 @@ class WriterScreen extends GetView<WriterController> {
               if (showPreview) {
                  return MarkdownView(
                   data: controller.contentController.text,
-                  title: controller.titleController.text,
                 );
               } else {
                 return Column(

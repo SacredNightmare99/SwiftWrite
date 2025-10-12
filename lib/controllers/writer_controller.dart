@@ -9,8 +9,12 @@ import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/models/note.dart';
 import 'package:writer/utils/helpers/file_type_analyzer.dart';
 
+import 'package:writer/api/judge0_service.dart';
+import 'package:writer/utils/constants/file_types.dart';
+
 class WriterController extends GetxController {
   final NoteController noteController = Get.find<NoteController>();
+  final Judge0Service judge0service = Judge0Service();
 
   final titleController = TextEditingController();
   final contentController = TextEditingController();
@@ -20,6 +24,7 @@ class WriterController extends GetxController {
   final isPreview = true.obs;
   final tags = <String>[].obs;
   final type = FileType.plainText.obs;
+  final isLoading = false.obs;
 
   @override
   void onInit() {
@@ -189,5 +194,31 @@ class WriterController extends GetxController {
 
   void togglePreview() {
     isPreview.toggle();
+  }
+
+  Future<void> runCode() async {
+    final extension = titleController.text.split('.').last;
+    final languageId = languageIdMap[extension.toLowerCase()];
+
+    if (languageId == null) {
+      Get.snackbar('Error', 'Unsupported language');
+      return;
+    }
+
+    isLoading.value = true;
+
+    try {
+      final token = await judge0service.createSubmission(contentController.text, languageId);
+      final result = await judge0service.getSubmission(token);
+      Get.toNamed('/code-output', arguments: {
+        'code': contentController.text,
+        'result': result,
+        'language': extension,
+      });
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to execute code: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

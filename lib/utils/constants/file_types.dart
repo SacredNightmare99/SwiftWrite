@@ -1,3 +1,26 @@
+enum FileType {
+  markdown,
+  programmingLanguage,
+  plainText,
+  unsupported,
+}
+
+const Map<String, int> languageIdMap = {
+  'cpp': 52,
+  'java': 62,
+  'py': 71,
+  'js': 63,
+  'c': 50,
+  'cs': 51,
+  'go': 60,
+  'kt': 78,
+  'php': 70,
+  'rb': 72,
+  'rs': 73,
+  'swift': 83,
+  'ts': 74,
+};
+
 class FileTypes {
   const FileTypes._();
 

@@ -4,8 +4,7 @@ import 'package:writer/utils/themes/markdown_style.dart';
 
 class MarkdownView extends StatelessWidget {
   final String data;
-  final String? title;
-  const MarkdownView({super.key, required this.data, this.title});
+  const MarkdownView({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
