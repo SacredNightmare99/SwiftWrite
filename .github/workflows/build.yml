@@ -35,13 +35,24 @@ jobs:
       - name: Build release APK
         run: flutter build apk --release
 
-      - name: Create or Update Release
-        uses: softprops/action-gh-release@v1
+      - name: Rename APK
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/SwiftWrite.apk
+      
+      - name: Delete Previous Release and Tag
+        run: |
+          gh release delete latest --yes || echo "No previous release to delete."
+          git push origin --delete latest || echo "No previous tag to delete."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create New Release
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
           name: Latest Release
           draft: false
           prerelease: false
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: build/app/outputs/flutter-apk/SwiftWrite.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
