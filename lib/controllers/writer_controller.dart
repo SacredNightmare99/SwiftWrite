@@ -196,27 +196,26 @@ class WriterController extends GetxController {
     isPreview.toggle();
   }
 
-  Future<void> runCode() async {
+  Future<void> runCode(BuildContext context) async {
     final extension = titleController.text.split('.').last;
     final languageId = languageIdMap[extension.toLowerCase()];
 
     if (languageId == null) {
-      Get.snackbar('Error', 'Unsupported language');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error\nUnsupported Language")));
       return;
     }
 
     isLoading.value = true;
 
     try {
-      final token = await judge0service.createSubmission(contentController.text, languageId);
-      final result = await judge0service.getSubmission(token);
+      final result = await judge0service.executeCode(contentController.text, languageId);
       Get.toNamed('/code-output', arguments: {
         'code': contentController.text,
         'result': result,
         'language': extension,
       });
     } catch (e) {
-      Get.snackbar('Error', 'Failed to execute code: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$e")));
     } finally {
       isLoading.value = false;
     }

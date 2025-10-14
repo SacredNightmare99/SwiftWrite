@@ -8,8 +8,8 @@ class AppRoutes {
   const AppRoutes._();
   
   static final routes = [
-    GetPage(name: '/', page: () => HomeScreen(), transition: Transition.leftToRight, curve: Curves.easeIn, transitionDuration: Duration(milliseconds: 700)),
-    GetPage(name: '/writer', page: () => WriterScreen(), transition: Transition.rightToLeft, curve: Curves.easeIn, transitionDuration: Duration(milliseconds: 700)),
+    GetPage(name: '/', page: () => const HomeScreen(), transition: Transition.leftToRight, curve: Curves.easeIn, transitionDuration: Duration(milliseconds: 700)),
+    GetPage(name: '/writer', page: () => const WriterScreen(), transition: Transition.rightToLeft, curve: Curves.easeIn, transitionDuration: Duration(milliseconds: 700)),
     GetPage(name: '/code-output', page: () => const CodeOutputView(), transition: Transition.downToUp, curve: Curves.easeIn, transitionDuration: Duration(milliseconds: 700)),
   ];
 }

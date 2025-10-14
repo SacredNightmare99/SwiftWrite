@@ -7,46 +7,29 @@ class Judge0Service {
   final String _apiKey = dotenv.env['Judge0API']!;
   final String _apiHost = 'judge0-ce.p.rapidapi.com';
 
-  Future<String> createSubmission(String sourceCode, int languageId) async {
+  /// Executes the code and waits for the result in a single API call.
+  /// Returns a Map containing the full execution result.
+  Future<Map<String, dynamic>> executeCode(String sourceCode, int languageId) async {
+    final uri = Uri.parse('$_baseUrl/submissions?base64_encoded=true&wait=true&fields=*');
+
     final response = await http.post(
-      Uri.parse('$_baseUrl/submissions'),
+      uri,
       headers: {
         'Content-Type': 'application/json',
         'X-RapidAPI-Key': _apiKey,
         'X-RapidAPI-Host': _apiHost,
       },
       body: jsonEncode({
-        'source_code': sourceCode,
+        'source_code': base64.encode(utf8.encode(sourceCode)),
         'language_id': languageId,
       }),
     );
 
-    if (response.statusCode == 201) {
-      return jsonDecode(response.body)['token'];
-    } else {
-      throw Exception('Failed to create submission');
-    }
-  }
-
-  Future<Map<String, dynamic>> getSubmission(String token) async {
-    final response = await http.get(
-      Uri.parse('$_baseUrl/submissions/$token'),
-      headers: {
-        'X-RapidAPI-Key': _apiKey,
-        'X-RapidAPI-Host': _apiHost,
-      },
-    );
-
     if (response.statusCode == 200) {
-      final result = jsonDecode(response.body);
-      if (result['status']['id'] <= 2) {
-        // Status: In Queue or Processing
-        await Future.delayed(const Duration(seconds: 2));
-        return getSubmission(token);
-      }
-      return result;
+      return jsonDecode(response.body) as Map<String, dynamic>;
     } else {
-      throw Exception('Failed to get submission');
+      final errorBody = jsonDecode(response.body);
+      throw Exception('Failed to execute code: ${errorBody['error'] ?? response.reasonPhrase}');
     }
   }
 }
