@@ -1,8 +1,7 @@
 name: Build Flutter APK
 
 on:
-  push:
-    branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -32,12 +31,20 @@ jobs:
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
+      # <-- ADD THIS STEP to create the key.properties file
+      - name: Create key.properties file
+        run: echo "${{ secrets.KEY_PROPERTIES }}" > android/key.properties
+
+      # <-- ADD THIS STEP to decode and create the keystore file
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/writer-key.jks
+
       - name: Build release APK
         run: flutter build apk --release
 
       - name: Rename APK
         run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/SwiftWrite.apk
-      
+
       - name: Delete Previous Release and Tag
         run: |
           gh release delete latest --yes || echo "No previous release to delete."
@@ -55,4 +62,3 @@ jobs:
           files: build/app/outputs/flutter-apk/SwiftWrite.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
