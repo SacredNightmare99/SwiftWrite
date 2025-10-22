@@ -25,7 +25,8 @@ class HomeScreen extends StatelessWidget {
             ),
             IconButton(
               icon: const Icon(Icons.brightness_6),
-              onPressed: () => ThemeService().switchTheme(),
+              onPressed: () => Get.find<ThemeService>().switchTheme(),
+              onLongPress: () => Get.find<ThemeService>().toggleFallTheme(context),
             ),
           ],
         ),

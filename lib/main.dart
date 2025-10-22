@@ -21,14 +21,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeService themeService = ThemeService();
+    final ThemeService themeService = Get.put(ThemeService());
+
+    final ThemeData initialLightTheme = themeService.isFallModeActive
+        ? AppTheme.lightThemeFall
+        : AppTheme.lightTheme;
+
+    final ThemeData initialDarkTheme = themeService.isFallModeActive
+        ? AppTheme.darkThemeFall
+        : AppTheme.darkTheme;
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SwiftWrite',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeService.theme,
+      theme: initialLightTheme,
+      darkTheme: initialDarkTheme,
+      themeMode: themeService.activeThemeMode,
       initialRoute: '/',
       getPages: AppRoutes.routes,
     );
