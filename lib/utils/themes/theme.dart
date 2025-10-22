@@ -71,7 +71,7 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.cardColorLight,
-      hintStyle: TextStyle(color: AppColors.textColorLight.withOpacity(0.6)), // Adjusted opacity
+      hintStyle: TextStyle(color: AppColors.textColorLight.withValues(alpha: 0.6)), // Adjusted opacity
       prefixIconColor: AppColors.textColorLight,
       suffixIconColor: AppColors.textColorLight,
       border: OutlineInputBorder(
@@ -149,7 +149,7 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.cardColorDark,
-      hintStyle: TextStyle(color: AppColors.textColorDark.withOpacity(0.6)), // Adjusted opacity
+      hintStyle: TextStyle(color: AppColors.textColorDark.withValues(alpha: 0.6)), // Adjusted opacity
       prefixIconColor: AppColors.textColorDark,
       suffixIconColor: AppColors.textColorDark,
       border: OutlineInputBorder(
@@ -227,7 +227,7 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.cardColorFallLight,
-      hintStyle: TextStyle(color: AppColors.textColorFallLight.withOpacity(0.6)),
+      hintStyle: TextStyle(color: AppColors.textColorFallLight.withValues(alpha: 0.6)),
       prefixIconColor: AppColors.textColorFallLight,
       suffixIconColor: AppColors.textColorFallLight,
       border: OutlineInputBorder(
@@ -305,7 +305,7 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.cardColorFallDark,
-      hintStyle: TextStyle(color: AppColors.textColorFallDark.withOpacity(0.6)),
+      hintStyle: TextStyle(color: AppColors.textColorFallDark.withValues(alpha: 0.6)),
       prefixIconColor: AppColors.textColorFallDark,
       suffixIconColor: AppColors.textColorFallDark,
       border: OutlineInputBorder(
