@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:showcaseview/showcaseview.dart';
 import 'package:writer/controllers/writer_controller.dart';
 import 'package:writer/utils/constants/file_types.dart';
 import 'package:writer/utils/widgets/markdown_view.dart';
-import 'package:writer/utils/widgets/showcase_container.dart';
 
 class WriterScreen extends GetView<WriterController> {
   const WriterScreen({super.key});
@@ -22,24 +20,17 @@ class WriterScreen extends GetView<WriterController> {
         top: false,
         child: Scaffold(
           appBar: AppBar(
-            title: Showcase.withWidget(
-              key: controller.titleKey,
-              container: ShowcaseContainer(
-                title: "Edit Title",
-                description: "Edit the Note Title here! File extensions like .txt, .py, .md are supported."
-              ),
-              child: Obx(() => controller.isPreview.value
-                  ? Text(controller.titleController.text)
-                  : TextField(
-                      controller: controller.titleController,
-                      decoration: const InputDecoration(
-                        hintText: 'Title',
-                        border: InputBorder.none,
-                        filled: false,
-                      ),
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    )),
-            ),
+            title: Obx(() => controller.isPreview.value
+                ? Text(controller.titleController.text)
+                : TextField(
+                    controller: controller.titleController,
+                    decoration: const InputDecoration(
+                      hintText: 'Title',
+                      border: InputBorder.none,
+                      filled: false,
+                    ),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  )),
             actions: [
               Obx(() {
                 if (controller.type.value == FileType.markdown) {
@@ -78,27 +69,13 @@ class WriterScreen extends GetView<WriterController> {
                 
                 return const SizedBox.shrink();
               }),
-              Showcase.withWidget(
-                key: controller.saveKey,
-                container: ShowcaseContainer(
-                  title: "Save",
-                  description: "Save note locally to your device storage."
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.save),
-                  onPressed: () => controller.saveNoteToFile(context),
-                ),
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () => controller.saveNoteToFile(context),
               ),
-              Showcase.withWidget(
-                key: controller.shareKey,
-                container: ShowcaseContainer(
-                  title: "Share",
-                  description: "Share this note as a file with other apps."
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.share),
-                  onPressed: controller.shareNote,
-                ),
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: controller.shareNote,
               ),
             ],
           ),
@@ -114,25 +91,18 @@ class WriterScreen extends GetView<WriterController> {
                 return Column(
                   children: [
                     Expanded(
-                      child: Showcase.withWidget(
-                        key: controller.contentKey,
-                        container: ShowcaseContainer(
-                          title: "Note Content",
-                          description: "This is where you write your note. Markdown and code snippets are supported!"
+                      child: TextField(
+                        autocorrect: false,
+                        keyboardType: TextInputType.multiline,
+                        controller: controller.contentController,
+                        maxLines: null,
+                        expands: true,
+                        decoration: const InputDecoration(
+                          hintText: 'Start writing...',
+                          border: InputBorder.none,
+                          filled: false,
                         ),
-                        child: TextField(
-                          autocorrect: false,
-                          keyboardType: TextInputType.multiline,
-                          controller: controller.contentController,
-                          maxLines: null,
-                          expands: true,
-                          decoration: const InputDecoration(
-                            hintText: 'Start writing...',
-                            border: InputBorder.none,
-                            filled: false,
-                          ),
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -146,19 +116,12 @@ class WriterScreen extends GetView<WriterController> {
                             );
                           }).toList(),
                         )),
-                    Showcase.withWidget(
-                      key: controller.addTagKey,
-                      container: ShowcaseContainer(
-                        title: "Add Tags",
-                        description: "Type a tag and press Enter/Done to add it to your note."
+                    TextField(
+                      controller: controller.tagController,
+                      decoration: const InputDecoration(
+                        hintText: 'Add a tag...',
                       ),
-                      child: TextField(
-                        controller: controller.tagController,
-                        decoration: const InputDecoration(
-                          hintText: 'Add a tag...',
-                        ),
-                        onSubmitted: controller.addTag,
-                      ),
+                      onSubmitted: controller.addTag,
                     ),
                   ],
                 );
