@@ -3,12 +3,13 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart' hide FileType;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/models/note.dart';
 import 'package:writer/utils/helpers/file_type_analyzer.dart';
-
 import 'package:writer/api/judge0_service.dart';
 import 'package:writer/utils/constants/file_types.dart';
 
@@ -26,6 +27,13 @@ class WriterController extends GetxController {
   final type = FileType.plainText.obs;
   final isLoading = false.obs;
 
+  // --- Showcase Keys ---
+  final GlobalKey shareKey = GlobalKey();
+  final GlobalKey saveKey = GlobalKey();
+  final GlobalKey addTagKey = GlobalKey();
+  final GlobalKey titleKey = GlobalKey();
+  final GlobalKey contentKey = GlobalKey();
+
   @override
   void onInit() {
     super.onInit();
@@ -38,6 +46,9 @@ class WriterController extends GetxController {
     titleController.addListener(_updateFileType);
     contentController.addListener(_updatePreviewState);
     _updateFileType();
+
+    _registerShowcase();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkAndShowTutorial());
   }
 
   @override
@@ -49,6 +60,62 @@ class WriterController extends GetxController {
     tagController.dispose();
     super.onClose();
   }
+
+// --- Showcase ---
+
+  void _registerShowcase() {
+    ShowcaseView.register(
+      onFinish: _onShowcaseFinish,
+      onStart: (index, key) {
+        debugPrint('Showcase started for item $index with key $key');
+      },
+      onComplete: (index, key) {
+        debugPrint('Showcase completed for item $index with key $key');
+        _onShowcaseFinish();
+      },
+      onDismiss: (key) {
+        debugPrint('Showcase dismissed at key $key');
+        _onShowcaseFinish();
+      },
+      blurValue: 1.0,
+      autoPlay: false,
+      autoPlayDelay: const Duration(seconds: 3),
+      enableAutoScroll: true,
+      scrollDuration: Duration(milliseconds: 500),
+
+      
+    );
+  }
+
+  void _checkAndShowTutorial() {
+    final settingsBox = Hive.box('settings');
+    bool hasCompletedOnboarding = settingsBox.get('hasCompletedOnboardingWriter', defaultValue: false);
+
+    if (!hasCompletedOnboarding) {
+      Future.delayed(const Duration(milliseconds: 700), () {
+        ShowcaseView.get().startShowCase(
+          [
+            titleKey,
+            contentKey,
+            addTagKey,
+            saveKey,
+            shareKey
+          ],
+        );
+      });
+    }
+  }
+
+  void _onShowcaseFinish() {
+    final settingsBox = Hive.box('settings');
+    if (!settingsBox.get('hasCompletedOnboardingWriter', defaultValue: false)) {
+        settingsBox.put('hasCompletedOnboardingWriter', true);
+        debugPrint("Onboarding marked as complete for Writer Screen.");
+    }
+  }
+
+
+// --- Note ---
 
   void _updateFileType() {
     final title = titleController.text;
@@ -220,4 +287,5 @@ class WriterController extends GetxController {
       isLoading.value = false;
     }
   }
+
 }
