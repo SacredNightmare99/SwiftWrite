@@ -1,32 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:writer/controllers/home_screen_controller.dart';
 import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/services/theme_service.dart';
 import 'package:writer/utils/helpers/helpers.dart';
 import 'package:writer/utils/widgets/note_tile.dart';
+import 'package:writer/utils/widgets/showcase_container.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends GetView<HomeScreenController> {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final NoteController noteController = Get.put(NoteController());
+    Get.put(HomeScreenController());
     final TextEditingController searchController = TextEditingController();
-
+    
     return SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('SwiftWrite'),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.file_open_outlined),
-              onPressed: () => AppHelpers.openFile(),
+            Showcase.withWidget(
+              key: controller.openFileKey,
+              container: ShowcaseContainer(
+                title: "Import Notes",
+                description: "Tap here to open and import notes from existing files.",
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.file_open_outlined),
+                onPressed: () => AppHelpers.openFile(),
+              ),
             ),
-            IconButton(
-              icon: const Icon(Icons.brightness_6),
-              onPressed: () => Get.find<ThemeService>().switchTheme(),
-              onLongPress: () => Get.find<ThemeService>().toggleFallTheme(context),
+            Showcase.withWidget(
+              key: controller.themeKey,
+              container: ShowcaseContainer(
+                title: "Change Theme",
+                description: "Tap to switch themes. Long press for the fall theme!",
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.brightness_6),
+                onPressed: () => Get.find<ThemeService>().switchTheme(),
+                onLongPress: () => Get.find<ThemeService>().toggleFallTheme(context),
+              ),
             ),
           ],
         ),
@@ -34,27 +52,41 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              TextField(
-                controller: searchController,
-                decoration: const InputDecoration(
-                  hintText: 'Search notes...',
-                  prefixIcon: Icon(Icons.search),
+              Showcase.withWidget(
+                key: controller.searchKey,
+                container: ShowcaseContainer(
+                  title: "Search Notes",
+                  description: "Quickly find notes by typing keywords here.",
                 ),
-                onChanged: noteController.setSearchQuery,
+                child: TextField(
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                    hintText: 'Search notes...',
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                  onChanged: noteController.setSearchQuery,
+                ),
               ),
               const SizedBox(height: 10),
-              Obx(
-                () => SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Wrap(
-                    spacing: 8.0,
-                    children: noteController.uniqueTags.map((tag) {
-                      return ChoiceChip(
-                        label: Text(tag),
-                        selected: noteController.selectedTag.value == tag,
-                        onSelected: (_) => noteController.setSeletedTag(tag),
-                      );
-                    }).toList(),
+              Showcase.withWidget(
+                key: controller.tagsKey,
+                container: ShowcaseContainer(
+                  title: "Filter by Tags", 
+                  description: "Tap on tag to filter your notes list"
+                ),                  
+                child: Obx(
+                  () => SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Wrap(
+                      spacing: 8.0,
+                      children: noteController.uniqueTags.map((tag) {
+                        return ChoiceChip(
+                          label: Text(tag),
+                          selected: noteController.selectedTag.value == tag,
+                          onSelected: (_) => noteController.setSeletedTag(tag),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
@@ -121,9 +153,16 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => Get.toNamed('/writer'),
-          child: const Icon(Icons.add),
+        floatingActionButton: Showcase.withWidget(
+          key: controller.addNoteKey,
+          container: ShowcaseContainer(
+            title: 'Add Note',
+            description: 'Tap here to create a new note!',
+          ),
+          child: FloatingActionButton(
+            onPressed: () => Get.toNamed('/writer'),
+            child: const Icon(Icons.add),
+          ),
         ),
       ),
     );
