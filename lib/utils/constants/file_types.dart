@@ -2,6 +2,7 @@ enum FileType {
   markdown,
   programmingLanguage,
   plainText,
+  todo,
   unsupported,
 }
 
@@ -65,9 +66,14 @@ class FileTypes {
     'csv',
   ];
 
+  static const List<String> todo = [
+    'todo',
+  ];
+
   static final List<String> supportedExtensions = [
     ...markdown,
     ...plainText,
     ...programmingLanguage,
+    ...todo,
   ];
 }

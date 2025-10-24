@@ -17,6 +17,9 @@ class FileTypeAnalyzer {
     if (FileTypes.programmingLanguage.contains(ext) || languageIdMap.containsKey(ext)) {
       return FileType.programmingLanguage;
     }
+    if (FileTypes.todo.contains(ext)) {
+      return FileType.todo;
+    }
 
     return FileType.unsupported;
   }
