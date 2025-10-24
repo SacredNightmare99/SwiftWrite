@@ -15,6 +15,10 @@ To build a minimalist writer app that prioritizes a fast, distraction-free exper
 - **Swipe to Delete:** Quickly delete notes from the list with a simple swipe gesture.
 - **Undo Delete:** Undo the deletion of a note.
 - **Markdown Support:** Write in Markdown and preview the rendered output.
+- **Todo Lists:** Create and manage todo lists using `.todo` files with Markdown checkbox syntax.
+- **Hybrid Todo View:** Seamlessly switch between a user-friendly UI and the raw Markdown source for your todo lists.
+- **Code Snippet Support:** Enhanced support for code snippets with syntax highlighting for various languages.
+- **Code Execution:** Run code snippets directly within the app.
 - **Tagging and Filtering:** Organize your notes with tags and filter them.
 - **Full-text search:** Quickly find the note you are looking for.
 - **File Operations:**
@@ -33,6 +37,5 @@ To build a minimalist writer app that prioritizes a fast, distraction-free exper
 
 ## Future Features
 
-- **Code Snippet Support:** Enhanced support for code snippets with syntax highlighting for various languages.
-- **Code Execution:** Run code snippets directly within the app.
 - **PDF Viewer and Editor:** Open and annotate PDF documents without leaving the app.
+- **Improve reordering of todo screen items:** Enhance the drag-and-drop experience for todo items.
