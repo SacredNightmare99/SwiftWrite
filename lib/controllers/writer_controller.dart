@@ -22,6 +22,7 @@ class WriterController extends GetxController {
 
   Note? existingNote;
   final isPreview = true.obs;
+  final isTodoSourceView = false.obs;
   final tags = <String>[].obs;
   final type = FileType.plainText.obs;
   final isLoading = false.obs;
@@ -48,6 +49,10 @@ class WriterController extends GetxController {
     contentController.dispose();
     tagController.dispose();
     super.onClose();
+  }
+
+  void toggleTodoSourceView() {
+    isTodoSourceView.toggle();
   }
 
   void _updateFileType() {
@@ -86,6 +91,8 @@ class WriterController extends GetxController {
 
     if (extension == null || fileType == FileType.unsupported) {
       finalExtension = 'txt';
+    } else if (fileType == FileType.todo) {
+      finalExtension = 'todo';
     } else {
       finalExtension = extension;
     }
