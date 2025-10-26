@@ -32,6 +32,7 @@ class TodoScreen extends StatelessWidget {
                   onChanged: (value) => controller.toggleTodoAt(index),
                 ),
                 title: TextFormField(
+                  autocorrect: true,
                   initialValue: item.title,
                   autofocus: false,
                   maxLines: 3,
@@ -39,8 +40,11 @@ class TodoScreen extends StatelessWidget {
                   onChanged: (value) {
                     controller.updateTodoTitle(index, value);
                   },
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10)
+                    ),
                   ),
                 ),
                 trailing: Row(
