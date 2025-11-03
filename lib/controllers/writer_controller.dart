@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/models/note.dart';
 import 'package:writer/utils/helpers/file_type_analyzer.dart';
+import 'package:writer/utils/helpers/file_helper.dart';
 
 import 'package:writer/api/judge0_service.dart';
 import 'package:writer/utils/constants/file_types.dart';
@@ -81,21 +82,7 @@ class WriterController extends GetxController {
       return;
     }
 
-    String? extension;
-    if (title.contains('.')) {
-      extension = title.split('.').last;
-    }
-
-    final fileType = FileTypeAnalyzer.classifyExtension(extension);
-    String? finalExtension;
-
-    if (extension == null || fileType == FileType.unsupported) {
-      finalExtension = 'txt';
-    } else if (fileType == FileType.todo) {
-      finalExtension = 'todo';
-    } else {
-      finalExtension = extension;
-    }
+    final finalExtension = FileHelper.determineFinalExtension(title, null);
 
     if (existingNote != null) {
       final isNewNote = !noteController.notes.any((note) => note.key == existingNote!.key);
@@ -129,17 +116,8 @@ class WriterController extends GetxController {
     final content = contentController.text;
     final dir = await getTemporaryDirectory();
 
-    String fileName = rawTitle.isNotEmpty ? rawTitle : 'note';
-    String? extension;
-
-    if (fileName.contains('.')) {
-      extension = fileName.split('.').last;
-    }
-
-    final fileType = FileTypeAnalyzer.classifyExtension(extension);
-    if (extension == null || fileType == FileType.unsupported) {
-      fileName = '$fileName.txt';
-    }
+    final extension = FileHelper.extractExtension(rawTitle);
+    final fileName = FileHelper.prepareFileName(rawTitle, extension);
 
     final file = File('${dir.path}/$fileName');
     await file.writeAsString(content);
@@ -156,17 +134,8 @@ class WriterController extends GetxController {
     final rawTitle = titleController.text.trim();
     final content = contentController.text;
 
-    String fileName = rawTitle.isNotEmpty ? rawTitle : 'note';
-    String? extension;
-
-    if (fileName.contains('.')) {
-      extension = fileName.split('.').last;
-    }
-
-    final fileType = FileTypeAnalyzer.classifyExtension(extension);
-    if (extension == null || fileType == FileType.unsupported) {
-      fileName = '$fileName.txt';
-    }
+    final extension = FileHelper.extractExtension(rawTitle);
+    final fileName = FileHelper.prepareFileName(rawTitle, extension);
 
     try {
       final result = await FilePicker.platform.saveFile(
