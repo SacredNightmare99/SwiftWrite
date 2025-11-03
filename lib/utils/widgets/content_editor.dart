@@ -8,7 +8,7 @@ class ContentEditor extends StatelessWidget {
   const ContentEditor({
     super.key,
     required this.controller,
-    this.style,
+    required this.style,
   });
 
   @override
@@ -24,7 +24,7 @@ class ContentEditor extends StatelessWidget {
         border: InputBorder.none,
         filled: false,
       ),
-      style: style ?? Theme.of(context).textTheme.bodyLarge,
+      style: style,
     );
   }
 }
