@@ -3,10 +3,32 @@ import 'package:get/get.dart';
 import 'package:writer/controllers/writer_controller.dart';
 import 'package:writer/utils/constants/file_types.dart';
 import 'package:writer/utils/widgets/markdown_view.dart';
+import 'package:writer/utils/widgets/content_editor.dart';
+import 'package:writer/utils/widgets/tag_editor.dart';
 import 'package:writer/views/todo_screen.dart';
 
 class WriterScreen extends GetView<WriterController> {
   const WriterScreen({super.key});
+
+  Widget _buildEditorWithTags(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: ContentEditor(
+            controller: controller.contentController,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        const SizedBox(height: 10),
+        TagEditor(
+          tags: controller.tags,
+          tagController: controller.tagController,
+          onAddTag: controller.addTag,
+          onRemoveTag: controller.removeTag,
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,43 +134,7 @@ class WriterScreen extends GetView<WriterController> {
               } else if (isTodo) {
                 return Obx(() {
                   if (controller.isTodoSourceView.value) {
-                    return Column(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            autocorrect: false,
-                            keyboardType: TextInputType.multiline,
-                            controller: controller.contentController,
-                            maxLines: null,
-                            expands: true,
-                            decoration: const InputDecoration(
-                              hintText: 'Start writing...',
-                              border: InputBorder.none,
-                              filled: false,
-                            ),
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Obx(() => Wrap(
-                              spacing: 8.0,
-                              runSpacing: 4.0,
-                              children: controller.tags.map((tag) {
-                                return Chip(
-                                  label: Text(tag),
-                                  onDeleted: () => controller.removeTag(tag),
-                                );
-                              }).toList(),
-                            )),
-                        TextField(
-                          controller: controller.tagController,
-                          decoration: const InputDecoration(
-                            hintText: 'Add a tag...',
-                          ),
-                          onSubmitted: controller.addTag,
-                        ),
-                      ],
-                    );
+                    return _buildEditorWithTags(context);
                   } else {
                     return TodoScreen(
                       data: controller.contentController.text,
@@ -159,43 +145,7 @@ class WriterScreen extends GetView<WriterController> {
                   }
                 });
               } else {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        autocorrect: false,
-                        keyboardType: TextInputType.multiline,
-                        controller: controller.contentController,
-                        maxLines: null,
-                        expands: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Start writing...',
-                          border: InputBorder.none,
-                          filled: false,
-                        ),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Obx(() => Wrap(
-                          spacing: 8.0,
-                          runSpacing: 4.0,
-                          children: controller.tags.map((tag) {
-                            return Chip(
-                              label: Text(tag),
-                              onDeleted: () => controller.removeTag(tag),
-                            );
-                          }).toList(),
-                        )),
-                    TextField(
-                      controller: controller.tagController,
-                      decoration: const InputDecoration(
-                        hintText: 'Add a tag...',
-                      ),
-                      onSubmitted: controller.addTag,
-                    ),
-                  ],
-                );
+                return _buildEditorWithTags(context);
               }
             }),
           ),

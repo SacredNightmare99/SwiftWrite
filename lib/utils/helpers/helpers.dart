@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:writer/controllers/note_controller.dart';
 import 'package:writer/data/models/note.dart';
+import 'package:writer/utils/helpers/file_helper.dart';
 
 class AppHelpers {
   const AppHelpers._();
@@ -61,7 +62,7 @@ class AppHelpers {
           content: content,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-          fileExtension: title.contains('.') ? title.split('.').last : null,
+          fileExtension: FileHelper.extractExtension(title),
         );
 
         Get.toNamed('/writer', arguments: newNote);
@@ -124,13 +125,7 @@ class AppHelpers {
 
   static Future<void> shareNote(Note note) async {
     final dir = await getTemporaryDirectory();
-    String fileName = note.title.isNotEmpty ? note.title : 'note';
-    final fileExtension = note.fileExtension;
-    if (fileExtension != null && !fileName.endsWith('.$fileExtension')) {
-      fileName = '$fileName.$fileExtension';
-    } else if (fileExtension == null && !fileName.contains('.')) {
-      fileName = '$fileName.txt';
-    }
+    final fileName = FileHelper.prepareFileName(note.title, note.fileExtension);
     final file = File('${dir.path}/$fileName');
     await file.writeAsString(note.content);
     await SharePlus.instance.share(
@@ -142,13 +137,7 @@ class AppHelpers {
   }
 
   static Future<void> saveNoteToFile(BuildContext context, Note note) async {
-    String fileName = note.title.isNotEmpty ? note.title : 'note';
-    final fileExtension = note.fileExtension;
-    if (fileExtension != null && !fileName.endsWith('.$fileExtension')) {
-      fileName = '$fileName.$fileExtension';
-    } else if (fileExtension == null && !fileName.contains('.')) {
-      fileName = '$fileName.txt';
-    }
+    final fileName = FileHelper.prepareFileName(note.title, note.fileExtension);
     try {
       final result = await FilePicker.platform.saveFile(
         dialogTitle: 'Save your note',
