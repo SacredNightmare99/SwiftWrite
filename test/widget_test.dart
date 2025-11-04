@@ -1,30 +1,65 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// This is the main widget test file for the SwiftWrite app.
+// It verifies that the app starts correctly and displays the expected UI elements.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:writer/main.dart';
+import 'package:writer/data/models/note.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    
+    // Initialize Hive for testing
+    await Hive.initFlutter();
+    
+    // Register adapters
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(NoteAdapter());
+    }
+    
+    // Open boxes if not already open
+    if (!Hive.isBoxOpen('settings')) {
+      await Hive.openBox('settings');
+    }
+    if (!Hive.isBoxOpen('notes')) {
+      await Hive.openBox<Note>('notes');
+    }
+
+    // Initialize dotenv for testing
+    dotenv.testLoad(fileInput: 'Judge0API=test_api_key');
+  });
+
+  tearDownAll(() async {
+    // Clean up after tests
+    await Hive.close();
+  });
+
+  testWidgets('MyApp initializes and displays correctly', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that the app initialized without errors
+    expect(find.byType(MaterialApp), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('App should have SwiftWrite title', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // The MaterialApp should have the title
+    final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(materialApp.title, 'SwiftWrite');
+  });
+
+  testWidgets('App should not show debug banner', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    await tester.pumpAndSettle();
+
+    final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(materialApp.debugShowCheckedModeBanner, false);
   });
 }
