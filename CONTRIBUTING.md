@@ -49,4 +49,56 @@ Since this is a small project, the contribution process is straightforward.
 -   **Structure:** Please follow the existing directory structure. For example, new UI screens go in `views/`, and their corresponding state management logic goes in `controllers/`.
 -   **Commit Messages:** Write clear and concise commit messages that explain the "why" behind your changes.
 
+## Testing Guidelines
+
+We have a comprehensive test suite to ensure code quality. Please follow these guidelines:
+
+### Writing Tests
+
+1.  **Add Tests for New Features:** All new features should include appropriate tests
+2.  **Fix Broken Tests:** If your changes break existing tests, update them accordingly
+3.  **Test Coverage:** Aim to maintain or improve test coverage with your changes
+4.  **Test Structure:** Follow the existing test structure in the `test/` directory:
+    -   Unit tests in `test/models/`, `test/helpers/`, `test/services/`, `test/controllers/`
+    -   Widget tests in `test/widgets/`
+    -   Integration tests in `test/integration/`
+
+### Running Tests
+
+Before submitting a pull request, ensure all tests pass:
+
+```bash
+# Run all tests
+flutter test
+
+# Run specific test file
+flutter test test/models/note_test.dart
+
+# Run tests with coverage
+flutter test --coverage
+
+# Use the provided test script
+./scripts/run_tests.sh
+```
+
+### Test Requirements
+
+-   All tests must pass before merging
+-   New features should include unit tests and/or widget tests
+-   Bug fixes should include a test that reproduces the bug
+-   Maintain test coverage above 80% when possible
+
+For more detailed testing information, see [test/README.md](test/README.md).
+
+## Code Quality Checklist
+
+Before submitting your pull request, ensure:
+
+-   [ ] All tests pass (`flutter test`)
+-   [ ] Code follows Flutter linting rules (`flutter analyze`)
+-   [ ] Code is properly formatted (`dart format .`)
+-   [ ] New features include tests
+-   [ ] Documentation is updated if needed
+-   [ ] Commit messages are clear and descriptive
+
 Thank you again for your interest in contributing!
