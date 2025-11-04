@@ -105,6 +105,10 @@ unlinked_spec.ds
 
 # Coverage
 coverage/
+*.lcov
+
+# Test mocks
+*.mocks.dart
 
 # Symbols
 app.*.symbols

@@ -35,6 +35,38 @@ To build a minimalist writer app that prioritizes a fast, distraction-free exper
 - **File Sharing:** [share_plus](https://pub.dev/packages/share_plus)
 - **File Picking:** [file_picker](https://pub.dev/packages/file_picker)
 
+## Testing
+
+SwiftWrite has a comprehensive test suite covering:
+- Unit tests for models, helpers, services, and controllers
+- Widget tests for UI components
+- Integration tests for core workflows
+
+### Running Tests
+
+```bash
+# Run all tests
+flutter test
+
+# Run tests with coverage
+flutter test --coverage
+
+# Run specific test file
+flutter test test/models/note_test.dart
+
+# Use the test script (Unix/Linux/macOS)
+./scripts/run_tests.sh
+```
+
+For more details, see the [Test Documentation](test/README.md).
+
+### Test Coverage
+
+- **100+ test cases** across all layers
+- Models, helpers, services, controllers, and widgets
+- Integration tests for app workflows
+- Continuous integration with GitHub Actions
+
 ## Future Features
 
 - **PDF Viewer and Editor:** Open and annotate PDF documents without leaving the app.
